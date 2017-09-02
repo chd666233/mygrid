@@ -1,0 +1,121 @@
+.grid{
+	position:relative;
+	display:inline-block;
+	/*width:100%;*/
+	border:1px solid #ddd;
+	background:#1db0b8;
+}
+.data{
+	text-align:center;
+	/*width:98%;*/
+}
+.col{
+	float:left;
+	/*position:relative;*/
+	/*width:170px;*/
+	/*border-right:1px solid #ddd;*/	
+}
+/*.col:hover{
+	opacity:0.99;
+}*/
+.col ul li:nth-child(odd){
+	background:#37c6c0;
+}
+.col ul li:nth-child(even){
+	background:#d0e9ff;
+}
+.col:first-child{
+	/*width:90px;*/
+}
+.col:last-child{
+	margin-right:10px;
+	/*width:200px;*/
+}
+.col ul{
+	list-style:none;
+	overflow:hidden;
+}
+.col li{
+	position: relative;
+}
+.data .head,.data li{		
+    line-height:40px;
+	border-right:1px solid #ddd;
+	border-bottom:1px solid #ddd;
+	-webkit-user-select:none;
+    -moz-user-select:none;
+    user-select:none;
+    cursor:pointer;
+}
+.data li:last-child{
+	/*border:none;*/
+}
+.toolbar{
+	float:left;
+	width:100%;
+	line-height:40px;
+	border-top:1px solid #ddd;
+}
+.toolbar .tb{
+	float:right;
+	text-align:right;
+	/*padding-right:15px;*/	
+}
+.toolbar .tb{
+	margin-right:70px;
+}
+.toolbar .currPg{
+	outline:none;
+    width:50px;
+    border-radius:5px;
+    border:1px solid #ddd;
+}
+.l,.close{
+	color:#ddd;
+}
+.down2{
+	position:relative;
+	z-index:5001;
+	animation:light 0.7s 1 ;
+}
+@keyframes light{
+	5%{box-shadow:0 0 5px 0px rgba(0,0,0,0.5);transform:scale(1,1);}
+	20%{box-shadow:0 0 20px 1px rgba(0,0,0,0.5);transform:scale(1.0005,1.0005)}
+	50%{box-shadow:0 0 30px 1px rgba(0,0,0,0.5);transform:scale(1.0005,1.0005)}
+	80%{box-shadow:0 0 20px 1px rgba(0,0,0,0.5);transform:scale(1.0005,1.0005)}
+	95%{box-shadow:0 0 5px 0px rgba(0,0,0,0.5);transform:scale(1,1)}
+}
+.trans{
+	box-shadow:0 0 0px 0px transparent;
+}
+.dragging{
+	position:absolute;
+	z-index:9999;
+	height: auto !important;
+	box-shadow:0 0 10px 4px rgba(0,0,0,0.5);
+	transform:scale(0.5,0.5) translate(-90%,-55%);
+	animation:none;
+	pointer-events: none;
+	opacity:1;
+	/*border:1px solid #ddd;*/
+}
+.down{
+	position:relative;
+	z-index:5001;
+	box-shadow:0 0 8px 1px rgba(0,0,0,0.5);
+	transform:scale(1.005,1.005);
+	transition:box-shadow 0.3s;
+}
+/*.down li{*/
+	/*border:none;*/
+/*}*/
+.f{
+	position:absolute;
+	top:13px;
+	margin-left:5px;
+	text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de;
+	/*color:#fff;*/
+}
+.head h6{
+	display:inline-block;
+}
