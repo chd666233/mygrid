@@ -6,12 +6,15 @@
 				var __DEFAULTS__={
 				head:[],
 				data:[],
-				sort:0,//不排序
+				sort:-1,//-1 不排序 0 正序 1倒序 
+				sortCol:"OrderID",//默认排序列
         currPg:1,
 				start:1,
 				stop:10,
-				pageSize:0,
 				url:false
+			}
+			var __FINALLY__={//常量
+				pageSize:0
 			}
 			
 			var __PROTO__={
@@ -36,7 +39,9 @@
 								$this.options.pageSize=Math.ceil($this.options.data.length/($this.options.stop-$this.options.start+1));
 								$this.options.oldDatas=$this.options.data.concat();///////////////3-1不排序的旧数据不要被更新所以放在这里,需要复制数组不能简单引用，不然oldDatas会被改变
 								$this.options.fstSta=$this.options.start;//分页算法需要第一页的开始数据保留
+								$this.sort_fn($this,$this.find(".head:contains("+$this.options.sortCol+")"));
 								$this.toggle();
+
 							},
 							error:function(XMLHttpRequest, textStatus, errorThrown){
 								lg(textStatus);
@@ -56,6 +61,7 @@
 					 	this.options.pageSize=Math.ceil(this.options.data.length/(this.options.stop-this.options.start+1));
 						this.options.oldDatas=this.options.data.concat();///////////////3-1不排序的旧数据不要被更新所以放在这里,需要复制数组不能简单引用，不然oldDatas会被改变
 						this.options.fstSta=this.options.start;//分页算法需要第一页的开始数据保留
+						this.sort_fn(this,this.find(".head:contains("+this.options.sortCol+")"));
 						this.toggle();
 					}
 				},
@@ -103,96 +109,14 @@
 						/////////////////6-2 发生了移动返回，非常重要的一步是6-3,必须在down的时候重置，因为down在click之前
 						/////move在中间，最后是click，如果发生了移动不执行，移动结束后发生点击通过down重置move，就不会导致click不能执行
 						if(_this.move)return;
-						//_this.options.sort被所有列共享不好，一列变成了2,另一列再去排序变成0，点击看起来没有反应
+						//_this.options.sort被所有列共享，一列变成了2,另一列再去排序变成0，点击看起来没有反应,所以
+						//换一列排序重置为0
 						if($(this).parents('.col').siblings().find('.f').hasClass('fa')){
 							_this.options.sort=0;
 							$(this).parents('.col').siblings().find('.f').removeClass('fa fa-sort-numeric-asc fa-sort-numeric-desc fa-sort-alpha-asc fa-sort-alpha-desc')
 						}
-
-						switch(++_this.options.sort){
-							case 0:
-							_this.sort($(this).text());
-							$(this).children('.f').removeClass('fa fa-sort-numeric-asc fa-sort-numeric-desc fa-sort-alpha-asc fa-sort-alpha-desc');
-							_this.pagging(_this.options.currPg);
-	
-							var listSize=_this.options.stop-_this.options.start;
-							if(_this.options.currPg==_this.options.pageSize){
-								listSize=_this.options.data.length-_this.options.start;
-							}
-							
-							for(var i=0;i<=listSize;i++){
-								_this.find('.col ul').each(function(j){
-									var li=$(this).children()[i];
-									var liHt=li.offsetHeight;
-									var liY=li.offsetTop;
-									var ulHt=$(this).height();
-									$(li).css({'transform':'translateY('+(ulHt/2-liY+liHt/2)+'px)','opacity':'0'});
-								})
-							}
-              setTimeout(function(){
-								_this.find('.col li').css({'transition':'transform 1s ease '+0+'s,opacity 1s','transform':'translateY(0px)','opacity':'1'});
-							},10)
-							break;
-							case 1:	
-							if(/(^(\d+)|(\d+\.\d+)&)|(^\d{4}-\d{2}-\d{2})/.test($(this).next().children()[0].innerHTML)){
-								$(this).children('.f').addClass('fa fa-sort-numeric-asc').removeClass('fa-sort-numeric-desc');
-							}else{
-								$(this).children('.f').addClass('fa fa-sort-alpha-asc').removeClass('fa-sort-alpha-desc');
-							}
-							_this.sort($(this).text());
-							_this.pagging(_this.options.currPg);
-							var listSize=_this.options.stop-_this.options.start;
-							if(_this.options.currPg==_this.options.pageSize){
-								listSize=_this.options.data.length-_this.options.start
-							}
-							for(var i=0;i<=listSize;i++){
-								_this.find('.col ul').each(function(){
-									var li=$(this).children()[i];
-									var liHt=li.offsetHeight;
-									var liY=li.offsetTop;
-									var _mWt=_this.find('.grid').width();
-									var _mHt=_this.find('.grid').height();
-									$(li).css({'transform':'translateY(-'+(100+liY)+'px)','opacity':'0'});
-
-									// setTimeout(function(){
-									// 	$(li).css({'transition':'transform 1s ease '+0+'s,opacity 1s','transform':'translate(0px)','opacity':'1'});
-									// },10)
-
-									
-								})
-							}
-							setTimeout(function(){
-								_this.find('.col li').css({'transition':'transform 1.5s ease '+0+'s,opacity 1s','transform':'translate(0px)','opacity':'1'});
-							},10)
-							break;
-							case 2:
-							if(/(^(\d+)|(\d+\.\d+)&)|(^\d{4}-\d{2}-\d{2})/.test($(this).next().children()[0].innerHTML)){
-								$(this).children('.f').addClass('fa fa-sort-numeric-desc').removeClass('fa-sort-numeric-asc');
-							}else{
-								$(this).children('.f').addClass('fa fa-sort-alpha-desc').removeClass('fa-sort-alpha-asc');
-							}
-							_this.sort($(this).text());
-							_this.options.sort=-1;
-							_this.pagging(_this.options.currPg);
-							var listSize=_this.options.stop-_this.options.start;
-							if(_this.options.currPg==_this.options.pageSize){
-								listSize=_this.options.data.length-_this.options.start
-							}
-							for(var i=0;i<=listSize;i++){
-								_this.find('.col ul').each(function(){
-									var li=$(this).children()[i];
-									var liHt=li.offsetHeight;
-									var liY=li.offsetTop;
-									var _mWt=_this.find('.grid').width();
-									var _mHt=_this.find('.grid').height();
-									$(li).css({'transform':'translateY('+(_mHt-liY+100)+'px)','opacity':'0'});
-								})
-							}
-							setTimeout(function(){
-								_this.find('.col li').css({'transition':'transform 1.5s ease '+0+'s,opacity 1s','transform':'translate(0px)','opacity':'1'});
-							},10)	
-							break;
-						}     		    
+		
+						_this.sort_fn(_this,$(this));
 					}).parents('.col').on('mouseenter',function(e){
 						if(!_this._col)return;
 						if(!_this.dragging)return;
@@ -271,11 +195,11 @@
 					}
 				},
 				pagging:function(currPg){
-					/* start:
-					 2+size*0+0  
-					 2+size*1+1   
-					 2+size*2+2
-					 2+size*3+3  */
+					/* start:2
+					 2+listSize*0+0  
+					 2+listSize*1+1   
+					 2+listSize*2+2
+					 2+listSize*3+3  */
 					currPg=parseInt(currPg);
 					var listSize=this.options.stop-this.options.start+1;/////////////4-2不需要计算最后一页的数据量了
 					// this.options.start=(currPg-1)*listSize+1;  
@@ -355,6 +279,92 @@
 						})
 					}
 				},
+				sort_fn:function(_this,$this){
+					switch(++_this.options.sort){
+						case 0:
+						_this.sort($this.text());
+						$this.children('.f').removeClass('fa fa-sort-numeric-asc fa-sort-numeric-desc fa-sort-alpha-asc fa-sort-alpha-desc');
+						_this.pagging(_this.options.currPg);
+
+						var listSize=_this.options.stop-_this.options.start;
+						if(_this.options.currPg==_this.options.pageSize){
+							listSize=_this.options.data.length-_this.options.start;
+						}
+						
+						for(var i=0;i<=listSize;i++){
+							_this.find('.col ul').each(function(j){
+								var li=$(this).children()[i];
+								var liHt=li.offsetHeight;
+								var liY=li.offsetTop;
+								var ulHt=$(this).height();
+								$(li).css({'transform':'translateY('+(ulHt/2-liY+liHt/2)+'px)','opacity':'0'});
+							})
+						}
+          	setTimeout(function(){
+							_this.find('.col li').css({'transition':'transform 1s ease '+0+'s,opacity 1s','transform':'translateY(0px)','opacity':'1'});
+						},10)
+						break;
+						case 1:	
+						if(/(^(\d+)|(\d+\.\d+)&)|(^\d{4}-\d{2}-\d{2})/.test($this.next().children()[0].innerHTML)){
+							$this.children('.f').addClass('fa fa-sort-numeric-asc').removeClass('fa-sort-numeric-desc');
+						}else{
+							$this.children('.f').addClass('fa fa-sort-alpha-asc').removeClass('fa-sort-alpha-desc');
+						}
+						_this.sort($this.text());
+						_this.pagging(_this.options.currPg);
+						var listSize=_this.options.stop-_this.options.start;
+						if(_this.options.currPg==_this.options.pageSize){
+							listSize=_this.options.data.length-_this.options.start
+						}
+						for(var i=0;i<=listSize;i++){
+							_this.find('.col ul').each(function(){
+								var li=$(this).children()[i];
+								var liHt=li.offsetHeight;
+								var liY=li.offsetTop;
+								var _mWt=_this.find('.grid').width();
+								var _mHt=_this.find('.grid').height();
+								$(li).css({'transform':'translateY(-'+(100+liY)+'px)','opacity':'0'});
+
+								// setTimeout(function(){
+								// 	$(li).css({'transition':'transform 1s ease '+0+'s,opacity 1s','transform':'translate(0px)','opacity':'1'});
+								// },10)
+
+								
+							})
+						}
+						setTimeout(function(){
+							_this.find('.col li').css({'transition':'transform 1s ease '+0+'s,opacity 1s','transform':'translate(0px)','opacity':'1'});
+						},10)
+						break;
+						case 2:
+						if(/(^(\d+)|(\d+\.\d+)&)|(^\d{4}-\d{2}-\d{2})/.test($this.next().children()[0].innerHTML)){
+							$this.children('.f').addClass('fa fa-sort-numeric-desc').removeClass('fa-sort-numeric-asc');
+						}else{
+							$this.children('.f').addClass('fa fa-sort-alpha-desc').removeClass('fa-sort-alpha-asc');
+						}
+						_this.sort($this.text());
+						_this.options.sort=-1;
+						_this.pagging(_this.options.currPg);
+						var listSize=_this.options.stop-_this.options.start;
+						if(_this.options.currPg==_this.options.pageSize){
+							listSize=_this.options.data.length-_this.options.start
+						}
+						for(var i=0;i<=listSize;i++){
+							_this.find('.col ul').each(function(){
+								var li=$(this).children()[i];
+								var liHt=li.offsetHeight;
+								var liY=li.offsetTop;
+								var _mWt=_this.find('.grid').width();
+								var _mHt=_this.find('.grid').height();
+								$(li).css({'transform':'translateY('+(_mHt-liY+100)+'px)','opacity':'0'});
+							})
+						}
+						setTimeout(function(){
+							_this.find('.col li').css({'transition':'transform 1s ease '+0+'s,opacity 1s','transform':'translate(0px)','opacity':'1'});
+						},10)	
+						break;
+					}     		    
+				}/*,
 				changestyle:function(_this){
 					var lf=[];
 					var tp=[];
@@ -370,9 +380,9 @@
 					})
 					_this.find('.grid').css({'width':gridwt,'height':gridht});
 					_this.find('.toolbar').css('margin-top',colht);
-				}
+				}*/
 			}
-			this.options=$.extend(__DEFAULTS__,options);
+			this.options=$.extend(__DEFAULTS__,options,__FINALLY__);
 			$.extend(this,__PROTO__);
 			this._init();
 			}
