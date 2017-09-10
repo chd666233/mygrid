@@ -18,6 +18,12 @@
 	<script>
 		$(function(){
 			$('.main').grid({
+				sort:-1,//-1 不排序 0 正序 1倒序 
+				sortCol:"OrderID",//排序列
+        		currPg:1,//当前页 ,从第一页开始显示
+				start:1,//开始显示行，从第一行开始显示
+				stop:10,//结束行，第10行结束显示
+				url:false,//json文件地址，不支持head也使用json,目前只支持data使用json
 				head:[
 					{text:"OrderID",width:"120px"},
 					{text:"Customer ID",width:"160px"},
